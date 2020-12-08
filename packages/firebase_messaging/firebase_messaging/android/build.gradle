@@ -16,6 +16,10 @@ rootProject.allprojects {
   repositories {
     google()
     jcenter()
+    maven { url 'https://developer.huawei.com/repo/' }
+    flatDir {
+      dirs project(':firebase_messaging').file('aars')
+    }
   }
 }
 
@@ -41,7 +45,7 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
   defaultConfig {
-    minSdkVersion 16
+    minSdkVersion 19
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
   lintOptions {
@@ -53,6 +57,10 @@ android {
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'androidx.annotation:annotation:1.1.0'
+    implementation fileTree(dir: 'libs', include: '*.jar')
+    compileOnly(name: 'push_oppo-2.1.0', ext: 'aar')
+    compileOnly(name: 'push_vivo-2.9.0.0', ext: 'aar')
+    implementation 'com.huawei.hms:push:5.0.4.302'
   }
 }
 

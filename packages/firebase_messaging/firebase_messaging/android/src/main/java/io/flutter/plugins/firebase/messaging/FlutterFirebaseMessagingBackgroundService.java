@@ -11,6 +11,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 import io.flutter.embedding.engine.FlutterShellArgs;
+import io.flutter.plugins.firebase.messaging.core.FlutterFirebaseMessagingUtils;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

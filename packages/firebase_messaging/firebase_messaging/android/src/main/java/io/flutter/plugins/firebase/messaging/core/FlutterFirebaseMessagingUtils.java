@@ -2,13 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package io.flutter.plugins.firebase.messaging;
+package io.flutter.plugins.firebase.messaging.core;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
+
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
+import com.heytap.msp.push.HeytapPushManager;
+import com.vivo.push.PushClient;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,14 +25,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-class FlutterFirebaseMessagingUtils {
-  static final String IS_AUTO_INIT_ENABLED = "isAutoInitEnabled";
-  static final String SHARED_PREFERENCES_KEY = "io.flutter.firebase.messaging.callback";
-  static final String ACTION_REMOTE_MESSAGE = "io.flutter.plugins.firebase.messaging.NOTIFICATION";
-  static final String EXTRA_REMOTE_MESSAGE = "notification";
-  static final String ACTION_TOKEN = "io.flutter.plugins.firebase.messaging.TOKEN";
-  static final String EXTRA_TOKEN = "token";
-  static final int JOB_ID = 2020;
+public class FlutterFirebaseMessagingUtils {
+  public static final String IS_AUTO_INIT_ENABLED = "isAutoInitEnabled";
+  public static final String SHARED_PREFERENCES_KEY = "io.flutter.firebase.messaging.callback";
+  public static final String ACTION_REMOTE_MESSAGE = "io.flutter.plugins.firebase.messaging.NOTIFICATION";
+  public static final String EXTRA_REMOTE_MESSAGE = "notification";
+  public static final String ACTION_TOKEN = "io.flutter.plugins.firebase.messaging.TOKEN";
+  public static final String EXTRA_TOKEN = "token";
+  public static final int JOB_ID = 2020;
+
   private static final String KEY_COLLAPSE_KEY = "collapseKey";
   private static final String KEY_DATA = "data";
   private static final String KEY_FROM = "from";
@@ -33,7 +43,30 @@ class FlutterFirebaseMessagingUtils {
   private static final String KEY_TO = "to";
   private static final String KEY_TTL = "ttl";
 
-  static Map<String, Object> remoteMessageToMap(RemoteMessage remoteMessage) {
+  @Nullable
+  public static PushType getSupportedPush(Context context) {
+    if (HeytapPushManager.isSupportPush()) {
+      return PushType.OPPO;
+    } else if (RomUtils.isEmui()) {
+      return PushType.HUAWEI;
+    } else if (PushClient.getInstance(context).isSupport()) {
+      return PushType.VIVO;
+    } else if (RomUtils.isMiui()) {
+      return PushType.XIAOMI;
+    } else if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == 0){
+      return PushType.FCM;
+    } else{
+      return null;
+    }
+  }
+
+  public static void sendTokenBroadcast(Context context, String token) {
+    Intent onMessageIntent = new Intent(FlutterFirebaseMessagingUtils.ACTION_TOKEN);
+    onMessageIntent.putExtra(FlutterFirebaseMessagingUtils.EXTRA_TOKEN, token);
+    LocalBroadcastManager.getInstance(context).sendBroadcast(onMessageIntent);
+  }
+
+  public static Map<String, Object> remoteMessageToMap(RemoteMessage remoteMessage) {
     Map<String, Object> messageMap = new HashMap<>();
     Map<String, Object> dataMap = new HashMap<>();
 
@@ -70,14 +103,14 @@ class FlutterFirebaseMessagingUtils {
 
     if (remoteMessage.getNotification() != null) {
       messageMap.put(
-          "notification", remoteMessageNotificationToMap(remoteMessage.getNotification()));
+        "notification", remoteMessageNotificationToMap(remoteMessage.getNotification()));
     }
 
     return messageMap;
   }
 
   private static Map<String, Object> remoteMessageNotificationToMap(
-      RemoteMessage.Notification notification) {
+    RemoteMessage.Notification notification) {
     Map<String, Object> notificationMap = new HashMap<>();
     Map<String, Object> androidNotificationMap = new HashMap<>();
 
@@ -160,28 +193,28 @@ class FlutterFirebaseMessagingUtils {
    *
    * @param context context.
    * @return True if the application is currently in a state where user interaction is possible,
-   *     false otherwise.
+   * false otherwise.
    */
-  static boolean isApplicationForeground(Context context) {
+  public static boolean isApplicationForeground(Context context) {
     KeyguardManager keyguardManager =
-        (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+      (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
 
     if (keyguardManager != null && keyguardManager.isKeyguardLocked()) {
       return false;
     }
 
     ActivityManager activityManager =
-        (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+      (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
     if (activityManager == null) return false;
 
     List<ActivityManager.RunningAppProcessInfo> appProcesses =
-        activityManager.getRunningAppProcesses();
+      activityManager.getRunningAppProcesses();
     if (appProcesses == null) return false;
 
     final String packageName = context.getPackageName();
     for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
       if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-          && appProcess.processName.equals(packageName)) {
+        && appProcess.processName.equals(packageName)) {
         return true;
       }
     }
@@ -191,7 +224,7 @@ class FlutterFirebaseMessagingUtils {
 
   // Extracted to handle multi-app support in the future.
   // arguments.get("appName") - to get the Firebase app name.
-  static FirebaseMessaging getFirebaseMessagingForArguments(Map<String, Object> arguments) {
+  public static FirebaseMessaging getFirebaseMessagingForArguments(Map<String, Object> arguments) {
     return FirebaseMessaging.getInstance();
   }
 
@@ -201,10 +234,10 @@ class FlutterFirebaseMessagingUtils {
    * @param arguments Method channel call arguments.
    * @return RemoteMessage
    */
-  static RemoteMessage getRemoteMessageForArguments(Map<String, Object> arguments) {
+  public static RemoteMessage getRemoteMessageForArguments(Map<String, Object> arguments) {
     @SuppressWarnings("unchecked")
     Map<String, Object> messageMap =
-        (Map<String, Object>) Objects.requireNonNull(arguments.get("message"));
+      (Map<String, Object>) Objects.requireNonNull(arguments.get("message"));
 
     String to = (String) Objects.requireNonNull(messageMap.get("to"));
     RemoteMessage.Builder builder = new RemoteMessage.Builder(to);

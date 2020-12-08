@@ -2,20 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package io.flutter.plugins.firebase.messaging;
+package io.flutter.plugins.firebase.messaging.core.receiver;
 
-import android.content.Intent;
 import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import io.flutter.plugins.firebase.messaging.core.FlutterFirebaseMessagingUtils;
+import io.flutter.plugins.firebase.messaging.core.LogUtils;
 
 public class FlutterFirebaseMessagingService extends FirebaseMessagingService {
   @Override
   public void onNewToken(@NonNull String token) {
-    Intent onMessageIntent = new Intent(FlutterFirebaseMessagingUtils.ACTION_TOKEN);
-    onMessageIntent.putExtra(FlutterFirebaseMessagingUtils.EXTRA_TOKEN, token);
-    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(onMessageIntent);
+    LogUtils.d("FMC onNewToken:" + token);
+    FlutterFirebaseMessagingUtils.sendTokenBroadcast(getApplicationContext(), token);
   }
 
   @Override

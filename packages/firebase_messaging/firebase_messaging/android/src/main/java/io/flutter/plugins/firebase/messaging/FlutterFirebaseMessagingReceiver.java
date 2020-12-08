@@ -12,6 +12,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.firebase.messaging.RemoteMessage;
 import java.util.HashMap;
 
+import io.flutter.plugins.firebase.messaging.core.FlutterFirebaseMessagingUtils;
+
 public class FlutterFirebaseMessagingReceiver extends BroadcastReceiver {
   private static final String TAG = "FLTFireMsgReceiver";
   static HashMap<String, RemoteMessage> notifications = new HashMap<>();

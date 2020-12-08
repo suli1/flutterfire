@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.flutter.plugins.firebase.messaging.core.FlutterFirebaseMessagingUtils;
+
 public class FlutterFirebaseMessagingStore {
   private static final String PREFERENCES_FILE = "io.flutter.plugins.firebase.messaging";
   private static final String KEY_NOTIFICATION_IDS = "notification_ids";
