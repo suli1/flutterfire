@@ -13,9 +13,6 @@ enum _ImageType { file, bytes }
 /// Rotation is counter-clockwise.
 enum ImageRotation { rotation0, rotation90, rotation180, rotation270 }
 
-/// Indicates whether a model is ran on device or in the cloud.
-enum ModelType { onDevice, cloud }
-
 /// Detected language from text recognition in regular and document images.
 class RecognizedLanguage {
   RecognizedLanguage._(dynamic data) : languageCode = data['languageCode'];
@@ -72,7 +69,6 @@ class FirebaseVision {
   ImageLabeler imageLabeler([ImageLabelerOptions options]) {
     return ImageLabeler._(
       options: options ?? const ImageLabelerOptions(),
-      modelType: ModelType.onDevice,
       handle: nextHandle++,
     );
   }
@@ -80,35 +76,6 @@ class FirebaseVision {
   /// Creates an instance of [TextRecognizer].
   TextRecognizer textRecognizer() {
     return TextRecognizer._(
-      modelType: ModelType.onDevice,
-      handle: nextHandle++,
-    );
-  }
-
-  /// Creates a cloud instance of [ImageLabeler].
-  ImageLabeler cloudImageLabeler([CloudImageLabelerOptions options]) {
-    return ImageLabeler._(
-      options: options ?? const CloudImageLabelerOptions(),
-      modelType: ModelType.cloud,
-      handle: nextHandle++,
-    );
-  }
-
-  /// Creates a cloud instance of [TextRecognizer].
-  TextRecognizer cloudTextRecognizer(
-      [CloudTextRecognizerOptions cloudOptions]) {
-    return TextRecognizer._(
-      cloudOptions: cloudOptions ?? const CloudTextRecognizerOptions(),
-      modelType: ModelType.cloud,
-      handle: nextHandle++,
-    );
-  }
-
-  /// Creates a cloud instance of [DocumentTextRecognizer].
-  DocumentTextRecognizer cloudDocumentTextRecognizer(
-      [CloudDocumentRecognizerOptions cloudOptions]) {
-    return DocumentTextRecognizer._(
-      cloudOptions: cloudOptions ?? const CloudDocumentRecognizerOptions(),
       handle: nextHandle++,
     );
   }
