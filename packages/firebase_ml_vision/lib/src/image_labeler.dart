@@ -103,17 +103,17 @@ class ImageLabel {
         text = data['text'];
 
   /// The overall confidence of the result. Range [0.0, 1.0].
-  final double confidence;
+  final double? confidence;
 
   /// The opaque entity ID.
   ///
   /// IDs are available in Google Knowledge Graph Search API
   /// https://developers.google.com/knowledge-graph/
-  final String entityId;
+  final String? entityId;
 
   /// A detected label from the given image.
   ///
   /// The label returned here is in English only. The end developer should use
   /// [entityId] to retrieve unique id.
-  final String text;
+  final String? text;
 }

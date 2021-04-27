@@ -85,14 +85,18 @@ abstract class TextContainer {
               )
             : null,
         confidence = data['confidence']?.toDouble(),
-        cornerPoints = List<Offset>.unmodifiable(
-            data['points'].map<Offset>((dynamic point) => Offset(
-                  point[0],
-                  point[1],
-                ))),
-        recognizedLanguages = List<RecognizedLanguage>.unmodifiable(
-            data['recognizedLanguages'].map<RecognizedLanguage>(
-                (dynamic language) => RecognizedLanguage._(language))),
+        cornerPoints = data['points']
+            ? List<Offset>.unmodifiable(
+                data['points'].map<Offset>((dynamic point) => Offset(
+                      point[0],
+                      point[1],
+                    )))
+            : null,
+        recognizedLanguages = data['recognizedLanguages'] != null
+            ? List<RecognizedLanguage>.unmodifiable(data['recognizedLanguages']
+                .map<RecognizedLanguage>(
+                    (dynamic language) => RecognizedLanguage._(language)))
+            : null,
         text = data['text'];
 
   /// Axis-aligned bounding rectangle of the detected text.
@@ -105,7 +109,7 @@ abstract class TextContainer {
   /// The confidence of the recognized text block.
   ///
   /// The value is null for onDevice text recognizer.
-  final double confidence;
+  final double? confidence;
 
   /// The four corner points in clockwise direction starting with top-left.
   ///
@@ -113,19 +117,19 @@ abstract class TextContainer {
   /// rectangle. Parts of the region could be outside of the image.
   ///
   /// Could be empty even if text is found.
-  final List<Offset> cornerPoints;
+  final List<Offset>? cornerPoints;
 
   /// All detected languages from recognized text.
   ///
   /// On-device text recognizers only detect Latin-based languages.
   /// If no languages are recognized, the list is empty.
-  final List<RecognizedLanguage> recognizedLanguages;
+  final List<RecognizedLanguage>? recognizedLanguages;
 
   /// The recognized text as a string.
   ///
   /// Returned in reading order for the language. For Latin, this is top to
   /// bottom within a Block, and left-to-right within a Line.
-  final String text;
+  final String? text;
 }
 
 /// A block of text (think of it as a paragraph) as deemed by the OCR engine.

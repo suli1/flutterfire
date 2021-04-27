@@ -258,14 +258,14 @@ class Barcode {
             : null,
         rawValue = _data['rawValue'],
         displayValue = _data['displayValue'],
-        format = BarcodeFormat._(_data['format']),
+        format = BarcodeFormat._(_data['format'] ?? 0),
         _cornerPoints = _data['points']
             ?.map<Offset>((dynamic item) => Offset(
                   item[0],
                   item[1],
                 ))
             ?.toList(),
-        valueType = BarcodeValueType.values[_data['valueType']],
+        valueType = BarcodeValueType.values[_data['valueType'] ?? 0],
         email = _data['email'] == null ? null : BarcodeEmail._(_data['email']),
         phone = _data['phone'] == null ? null : BarcodePhone._(_data['phone']),
         sms = _data['sms'] == null ? null : BarcodeSMS._(_data['sms']),
@@ -296,7 +296,7 @@ class Barcode {
   /// Structured values are not parsed, for example: 'MEBKM:TITLE:Google;URL://www.google.com;;'.
   ///
   /// Null if nothing found.
-  final String rawValue;
+  final String? rawValue;
 
   /// Barcode value in a user-friendly format.
   ///
@@ -309,10 +309,10 @@ class Barcode {
   /// May include the supplement value.
   ///
   /// Null if nothing found.
-  final String displayValue;
+  final String? displayValue;
 
   /// The barcode format, for example [BarcodeFormat.ean13].
-  final BarcodeFormat format;
+  final BarcodeFormat? format;
 
   /// The four corner points in clockwise direction starting with top-left.
   ///
@@ -429,13 +429,13 @@ class BarcodeWiFi {
       : ssid = data['ssid'],
         password = data['password'],
         encryptionType =
-            BarcodeWiFiEncryptionType.values[data['encryptionType']];
+            BarcodeWiFiEncryptionType.values[data['encryptionType'] ?? 0];
 
   /// A Wi-Fi access point SSID.
-  final String ssid;
+  final String? ssid;
 
   /// A Wi-Fi access point password.
-  final String password;
+  final String? password;
 
   /// The encryption type of the WIFI
   ///
@@ -450,10 +450,10 @@ class BarcodeGeoPoint {
         longitude = data['longitude'];
 
   /// A location latitude.
-  final double latitude;
+  final double? latitude;
 
   /// A location longitude.
-  final double longitude;
+  final double? longitude;
 }
 
 /// A person's or organization's business card.
@@ -513,17 +513,19 @@ class BarcodeContactInfo {
 /// An address.
 class BarcodeAddress {
   BarcodeAddress._(Map<dynamic, dynamic> data)
-      : addressLines = List<String>.unmodifiable(
-            data['addressLines'].map<String>((dynamic item) {
-          final String s = item;
-          return s;
-        })),
-        type = BarcodeAddressType.values[data['type']];
+      : addressLines = data['addressLines'] != null
+            ? List<String>.unmodifiable(
+                data['addressLines'].map<String>((dynamic item) {
+                final String s = item;
+                return s;
+              }))
+            : null,
+        type = BarcodeAddressType.values[data['type'] ?? 0];
 
   /// Formatted address, multiple lines when appropriate.
   ///
   /// This field always contains at least one line.
-  final List<String> addressLines;
+  final List<String>? addressLines;
 
   /// Type of the address.
   ///
@@ -545,25 +547,25 @@ class BarcodePersonName {
         suffix = data['suffix'];
 
   /// The properly formatted name.
-  final String formattedName;
+  final String? formattedName;
 
   /// First name
-  final String first;
+  final String? first;
 
   /// Last name
-  final String last;
+  final String? last;
 
   /// Middle name
-  final String middle;
+  final String? middle;
 
   /// Prefix of the name
-  final String prefix;
+  final String? prefix;
 
   /// Designates a text string to be set as the kana name in the phonebook. Used for Japanese contacts.
-  final String pronunciation;
+  final String? pronunciation;
 
   /// Suffix of the person's name
-  final String suffix;
+  final String? suffix;
 }
 
 /// DateTime data type used in calendar events.
@@ -578,25 +580,25 @@ class BarcodeCalendarEvent {
         end = DateTime.parse(data['end']);
 
   /// The description of the calendar event.
-  final String eventDescription;
+  final String? eventDescription;
 
   /// The location of the calendar event.
-  final String location;
+  final String? location;
 
   /// The organizer of the calendar event.
-  final String organizer;
+  final String? organizer;
 
   /// The status of the calendar event.
-  final String status;
+  final String? status;
 
   /// The summary of the calendar event.
-  final String summary;
+  final String? summary;
 
   /// The start date time of the calendar event.
-  final DateTime start;
+  final DateTime? start;
 
   /// The end date time of the calendar event.
-  final DateTime end;
+  final DateTime? end;
 }
 
 /// A driver license or ID card.
@@ -618,46 +620,46 @@ class BarcodeDriverLicense {
         issuingCountry = data['issuingCountry'];
 
   /// Holder's first name.
-  final String firstName;
+  final String? firstName;
 
   /// Holder's middle name.
-  final String middleName;
+  final String? middleName;
 
   /// Holder's last name.
-  final String lastName;
+  final String? lastName;
 
   /// Holder's gender. 1 - male, 2 - female.
-  final String gender;
+  final String? gender;
 
   /// City of holder's address.
-  final String addressCity;
+  final String? addressCity;
 
   /// State of holder's address.
-  final String addressState;
+  final String? addressState;
 
   /// Holder's street address.
   final String addressStreet;
 
   /// Zip code of holder's address.
-  final String addressZip;
+  final String? addressZip;
 
   /// Birth date of the holder.
-  final String birthDate;
+  final String? birthDate;
 
   /// "DL" for driver licenses, "ID" for ID cards.
-  final String documentType;
+  final String? documentType;
 
   /// Driver license ID number.
-  final String licenseNumber;
+  final String? licenseNumber;
 
   /// Expiry date of the license.
-  final String expiryDate;
+  final String? expiryDate;
 
   /// Issue date of the license.
   ///
   /// The date format depends on the issuing country. MMDDYYYY for the US, YYYYMMDD for Canada.
-  final String issuingDate;
+  final String? issuingDate;
 
   /// Country in which DL/ID was issued. US = "USA", Canada = "CAN".
-  final String issuingCountry;
+  final String? issuingCountry;
 }

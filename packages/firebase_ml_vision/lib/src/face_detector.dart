@@ -213,7 +213,7 @@ class Face {
   /// The Euler Y angle is guaranteed only when using the "accurate" mode
   /// setting of the face detector (as opposed to the "fast" mode setting, which
   /// takes some shortcuts to make detection faster).
-  final double headEulerAngleY;
+  final double? headEulerAngleY;
 
   /// The rotation of the face about the axis pointing out of the image.
   ///
@@ -223,30 +223,30 @@ class Face {
   /// to the camera.
   ///
   /// ML Kit always reports the Euler Z angle of a detected face.
-  final double headEulerAngleZ;
+  final double? headEulerAngleZ;
 
   /// Probability that the face's left eye is open.
   ///
   /// A value between 0.0 and 1.0 inclusive, or null if probability was not
   /// computed.
-  final double leftEyeOpenProbability;
+  final double? leftEyeOpenProbability;
 
   /// Probability that the face's right eye is open.
   ///
   /// A value between 0.0 and 1.0 inclusive, or null if probability was not
   /// computed.
-  final double rightEyeOpenProbability;
+  final double? rightEyeOpenProbability;
 
   /// Probability that the face is smiling.
   ///
   /// A value between 0.0 and 1.0 inclusive, or null if probability was not
   /// computed.
-  final double smilingProbability;
+  final double? smilingProbability;
 
   /// The tracking ID if the tracking is enabled.
   ///
   /// Null if tracking was not enabled.
-  final int trackingId;
+  final int? trackingId;
 
   /// Gets the landmark based on the provided [FaceLandmarkType].
   ///
