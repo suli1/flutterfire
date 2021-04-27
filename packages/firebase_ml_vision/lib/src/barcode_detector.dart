@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 part of firebase_ml_vision;
 
 /// Enumeration of supported barcode content value types for [Barcode.valueType].
@@ -198,7 +196,7 @@ class BarcodeDetector {
     assert(!_isClosed);
 
     _hasBeenOpened = true;
-    final List<dynamic> reply =
+    final List<dynamic>? reply =
         await FirebaseVision.channel.invokeListMethod<dynamic>(
       'BarcodeDetector#detectInImage',
       <String, dynamic>{
@@ -208,10 +206,12 @@ class BarcodeDetector {
         },
       }..addAll(visionImage._serialize()),
     );
-
-    final List<Barcode> barcodes =
-        reply.map((barcode) => Barcode._(barcode)).toList();
-
+    final List<Barcode> barcodes = <Barcode>[];
+    if (reply != null) {
+      for (final dynamic barcode in reply) {
+        barcodes.add(Barcode._(barcode));
+      }
+    }
     return barcodes;
   }
 
@@ -289,7 +289,7 @@ class Barcode {
   /// The bounding rectangle of the detected barcode.
   ///
   /// Could be null if the bounding rectangle can not be determined.
-  final Rect boundingBox;
+  final Rect? boundingBox;
 
   /// Barcode value as it was encoded in the barcode.
   ///
@@ -332,31 +332,31 @@ class Barcode {
   final BarcodeValueType valueType;
 
   /// Parsed email details. (set iff [valueType] is [BarcodeValueType.email]).
-  final BarcodeEmail email;
+  final BarcodeEmail? email;
 
   /// Parsed phone details. (set iff [valueType] is [BarcodeValueType.phone]).
-  final BarcodePhone phone;
+  final BarcodePhone? phone;
 
   /// Parsed SMS details. (set iff [valueType] is [BarcodeValueType.sms]).
-  final BarcodeSMS sms;
+  final BarcodeSMS? sms;
 
   /// Parsed URL bookmark details. (set iff [valueType] is [BarcodeValueType.url]).
-  final BarcodeURLBookmark url;
+  final BarcodeURLBookmark? url;
 
   /// Parsed WiFi AP details. (set iff [valueType] is [BarcodeValueType.wifi]).
-  final BarcodeWiFi wifi;
+  final BarcodeWiFi? wifi;
 
   /// Parsed geo coordinates. (set iff [valueType] is [BarcodeValueType.geographicCoordinates]).
-  final BarcodeGeoPoint geoPoint;
+  final BarcodeGeoPoint? geoPoint;
 
   /// Parsed contact details. (set iff [valueType] is [BarcodeValueType.contactInfo]).
-  final BarcodeContactInfo contactInfo;
+  final BarcodeContactInfo? contactInfo;
 
   /// Parsed calendar event details. (set iff [valueType] is [BarcodeValueType.calendarEvent]).
-  final BarcodeCalendarEvent calendarEvent;
+  final BarcodeCalendarEvent? calendarEvent;
 
   /// Parsed driver's license details. (set iff [valueType] is [BarcodeValueType.driverLicense]).
-  final BarcodeDriverLicense driverLicense;
+  final BarcodeDriverLicense? driverLicense;
 }
 
 /// An email message from a 'MAILTO:' or similar QRCode type.
@@ -485,29 +485,29 @@ class BarcodeContactInfo {
   /// Contact person's addresses.
   ///
   /// Could be an empty list if nothing found.
-  final List<BarcodeAddress> addresses;
+  final List<BarcodeAddress>? addresses;
 
   /// Contact person's emails.
   ///
   /// Could be an empty list if nothing found.
-  final List<BarcodeEmail> emails;
+  final List<BarcodeEmail>? emails;
 
   /// Contact person's name.
-  final BarcodePersonName name;
+  final BarcodePersonName? name;
 
   /// Contact person's phones.
   ///
   /// Could be an empty list if nothing found.
-  final List<BarcodePhone> phones;
+  final List<BarcodePhone>? phones;
 
   /// Contact urls associated with this person.
-  final List<String> urls;
+  final List<String>? urls;
 
   /// Contact person's title.
-  final String jobTitle;
+  final String? jobTitle;
 
   /// Contact person's organization.
-  final String organization;
+  final String? organization;
 }
 
 /// An address.

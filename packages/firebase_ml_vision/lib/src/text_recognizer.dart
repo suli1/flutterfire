@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 part of firebase_ml_vision;
 
 /// Detector for performing optical character recognition(OCR) on an input image.
@@ -22,7 +20,7 @@ part of firebase_ml_vision;
 /// ```
 class TextRecognizer {
   TextRecognizer._({
-    @required int handle,
+    required int handle,
   }) : _handle = handle;
 
   final int _handle;
@@ -31,13 +29,12 @@ class TextRecognizer {
   bool _isClosed = false;
 
   /// Detects [VisionText] from a [FirebaseVisionImage].
-  Future<VisionText> processImage(FirebaseVisionImage visionImage) async {
+  Future<VisionText?> processImage(FirebaseVisionImage visionImage) async {
     assert(!_isClosed);
-    assert(visionImage != null);
 
     _hasBeenOpened = true;
 
-    final Map<String, dynamic> reply =
+    final Map<String, dynamic>? reply =
         await FirebaseVision.channel.invokeMapMethod<String, dynamic>(
       'TextRecognizer#processImage',
       <String, dynamic>{
@@ -46,7 +43,7 @@ class TextRecognizer {
       }..addAll(visionImage._serialize()),
     );
 
-    return VisionText._(reply);
+    return reply != null ? VisionText._(reply) : null;
   }
 
   /// Releases resources used by this recognizer.
@@ -103,7 +100,7 @@ abstract class TextContainer {
   /// The point (0, 0) is defined as the upper-left corner of the image.
   ///
   /// Could be null even if text is found.
-  final Rect boundingBox;
+  final Rect? boundingBox;
 
   /// The confidence of the recognized text block.
   ///
